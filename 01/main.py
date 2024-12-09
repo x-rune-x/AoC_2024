@@ -16,23 +16,15 @@ def part2(location_ids1: list, location_ids2: list):
 
 
 def get_number_of_occurences(locations: list) -> dict:
-    locations.sort()
-
-    current_number = locations[0]
-    occurences = 0
     number_of_occurences = {}
 
     for num in locations:
-        if num == current_number:
-            occurences +=1
+        if num in number_of_occurences:
+           number_of_occurences[num] += 1
         else:
-            number_of_occurences[current_number] = occurences
-            current_number = num
-            occurences = 1
-    number_of_occurences[current_number] = occurences # Account for the last location number in the list not being added to the dictionary in the loop.
+           number_of_occurences[num] = 1
     
     return number_of_occurences
-
 
 
 def main():

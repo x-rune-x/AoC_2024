@@ -39,12 +39,12 @@ def part1(word_search: list[str], keyword: str) -> int:
 def part2(word_search: list[str], keyword: str) -> int:
     reversed_keyword = keyword[::-1]
     keyword_middle_index = int(len(keyword) / 2) # Assuming keyword has odd length.
-    y_range = len(word_search) - keyword_middle_index # Restrict seraching the matrix to an inner boundary
+    y_range = len(word_search) - keyword_middle_index # Restrict searching the matrix to an inner boundary
     x_range = len(word_search[0]) - keyword_middle_index #  since it will be impossible for the X to be formed outsdie of this area.
     word_length = len(keyword)
     total = 0
 
-    for i in range(keyword_middle_index, y_range):
+    for i in range(keyword_middle_index, y_range): # Move an X shape through the matrix and check if the arms are "MAS" or "SAM".
         for j in range(keyword_middle_index, x_range):        
             if word_search[i][j] == keyword[keyword_middle_index]:
                 x1 = ''.join([word_search[i - keyword_middle_index + z][j - keyword_middle_index + z] for z in range(word_length)])

@@ -1,35 +1,15 @@
-def order_pages(order_rules: list[tuple[int]]) -> list:
-    page_order = []
-
+def check_pages_are_in_order(update: list[int], order_rules: list[tuple[int]]) -> bool:    
     for rule in order_rules:
-        if rule[0] not in page_order:
-            page_order.append(rule[0])
-
-        if rule[1] not in page_order:
-            page_order.append(rule[1])
-
-        index1 = page_order.index(rule[0])
-        index2 = page_order.index(rule[1])
-        if index1 > index2:
-            section = page_order[index2 + 1:index1 + 1]
-            del page_order[index2 + 1:index1 + 1]
-            page_order = page_order[:index2] + section + page_order[index2:]
-
-    return page_order
-
-
-def check_pages_are_in_order(page_order: list, update_pages: list) -> bool:    
-    page_order = [page for page in page_order if page in update_pages]
-    for page in update_pages:
-        if update_pages.index(page) > page_order.index(page):
+        first_num = rule[0]
+        second_num = rule[1]
+        if first_num in update and second_num in update and update.index(first_num) > update.index(second_num):
             return False
 
     return True
 
 
 def part1(order_rules: list, updates: list) -> int:
-    page_order = order_pages(order_rules)
-    correctly_ordered_updates = [update for update in updates if check_pages_are_in_order(page_order, update)] 
+    correctly_ordered_updates = [update for update in updates if check_pages_are_in_order(update, order_rules)]
 
     return sum([update[len(update) // 2] for update in correctly_ordered_updates])
 

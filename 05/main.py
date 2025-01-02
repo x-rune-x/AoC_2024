@@ -8,10 +8,22 @@ def check_pages_are_in_order(update: list[int], order_rules: list[tuple[int]]) -
     return True
 
 
-def part1(order_rules: list, updates: list) -> int:
+def part1(order_rules: list[tuple[int]], updates: list[int]) -> int:
     correctly_ordered_updates = [update for update in updates if check_pages_are_in_order(update, order_rules)]
 
     return sum([update[len(update) // 2] for update in correctly_ordered_updates])
+
+
+def part2(order_rules: list[tuple[int]], updates: list[int]):
+    incorrectly_ordered_updates = [update for update in updates if check_pages_are_in_order(update, order_rules) == False]
+
+    for update in incorrectly_ordered_updates:
+        for rule in order_rules:          
+            if rule[0] in update and rule[1] in update and update.index(rule[0]) > update.index(rule[1]):
+                num = update.pop(update.index(rule[1]))
+                update.insert(update.index(rule[0]) + 1, num)
+    
+    return sum([update[len(update) // 2] for update in incorrectly_ordered_updates])
 
 
 def process_input(input_path: str):
@@ -30,8 +42,9 @@ def process_input(input_path: str):
 
 
 def main():
-    input = process_input("05/input_05.txt")
-    print(part1(input[0], input[1]))
+    input = process_input("05/test_05.txt")
+    #print(part1(input[0], input[1]))
+    print(part2(input[0], input[1]))
 
 if __name__ == "__main__":
     main()

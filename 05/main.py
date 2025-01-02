@@ -15,7 +15,7 @@ def part1(order_rules: list, updates: list) -> int:
 
 
 def process_input(input_path: str):
-    with open(input_path) as f: lines = [line.strip() for line in f if line.strip()] # Skip the spare line separating the rules from the updates 
+    with open(input_path) as f: lines = [line.strip() for line in f if line.strip()] # Use second strip to skip the spare line separating the rules from the updates 
 
     order_rules, updates = [], []
 

@@ -11,25 +11,32 @@ def check_pages_are_in_order(update: list[int], order_rules: list[tuple[int]], v
 
 
 def get_order(order_rules: list[tuple[int]]):
-    order = []
+    rule_counts = {}    # Page number with the most rules specifying it has to be before other pages will be the first in the order.
+    all_page_nums = []  # Use this to compare with the numbers in the rule counts to find the page number with no rules saying it must be first. 
+                        # This will be the last in the order
+
     for rule in order_rules:
-        if rule[0] not in order:
-            order.append(rule[0])
-        if rule[1] not in order:
-            order.append(rule[1])
+        if rule[0] in rule_counts:
+            rule_counts[rule[0]] += 1
+        else:
+            rule_counts[rule[0]] = 1
         
-        pos_num1 = order.index(rule[0])
-        pos_num2 = order.index(rule[1])
+        if rule[0] not in all_page_nums:
+            all_page_nums.append(rule[0])
+        if rule[1] not in all_page_nums:
+            all_page_nums.append(rule[1])
 
-        if pos_num1 > pos_num2:
-            order.pop(pos_num2)
-            order.insert(pos_num1, rule[1])
+    final_page = [page for page in all_page_nums if page not in rule_counts][0]
+    rule_counts[final_page] = 0
+    
+    for rule in rule_counts:
+        rule_counts[rule] = abs(rule_counts[rule] - (len(all_page_nums) - 1))
 
-    return order
-
-
-def order_update(update: list[int], order: list[int]):
-    return [page for page in order if page in update]
+    nums = [0 for i in range(len(all_page_nums))]
+    for rule in rule_counts:
+        nums[rule_counts[rule]] = rule
+    
+    return nums
 
 
 def part1(order_rules: list[tuple[int]], updates: list[list[int]]) -> int:

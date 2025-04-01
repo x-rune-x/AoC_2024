@@ -10,33 +10,19 @@ def check_pages_are_in_order(update: list[int], order_rules: list[tuple[int]], v
     return True
 
 
-def get_order(order_rules: list[tuple[int]]):
-    rule_counts = {}    # Page number with the most rules specifying it has to be before other pages will be the first in the order.
-    all_page_nums = []  # Use this to compare with the numbers in the rule counts to find the page number with no rules saying it must be first. 
-                        # This will be the last in the order
-
-    for rule in order_rules:
-        if rule[0] in rule_counts:
-            rule_counts[rule[0]] += 1
-        else:
-            rule_counts[rule[0]] = 1
+def get_order(order_rules: list[tuple[int]], update: list[int] = None) -> list[int]: 
+    # For each number, find all the numbers that it has to go in fron of and put it in front of the first one in the update.
+    for page in update:
+        rules_with_page_as_first = [rule for rule in order_rules if rule[0] == page]
+        minimum_position = update.index(page) if len(rules_with_page_as_first) < 1 else min([update.index(rule[1]) for rule in rules_with_page_as_first])
         
-        if rule[0] not in all_page_nums:
-            all_page_nums.append(rule[0])
-        if rule[1] not in all_page_nums:
-            all_page_nums.append(rule[1])
+        pos_of_page = update.index(page)
+        if pos_of_page > minimum_position:
+            # Move the page to the position of the first rule it has to go in front of.
+            update.pop(pos_of_page)
+            update.insert(minimum_position, page)
 
-    final_page = [page for page in all_page_nums if page not in rule_counts][0]
-    rule_counts[final_page] = 0
-    
-    for rule in rule_counts:
-        rule_counts[rule] = abs(rule_counts[rule] - (len(all_page_nums) - 1))
-
-    nums = [0 for i in range(len(all_page_nums))]
-    for rule in rule_counts:
-        nums[rule_counts[rule]] = rule
-    
-    return nums
+    return update
 
 
 def part1(order_rules: list[tuple[int]], updates: list[list[int]]) -> int:
@@ -46,14 +32,14 @@ def part1(order_rules: list[tuple[int]], updates: list[list[int]]) -> int:
 
 
 def part2(order_rules: list[tuple[int]], updates: list[list[int]]):
-    order = get_order(order_rules)
     incorrectly_ordered_updates = [update for update in updates if check_pages_are_in_order(update, order_rules) == False]
-
     total = 0
 
     for update in incorrectly_ordered_updates:
-        middle_page = [page for page in order if page in update][len(update) // 2]
-        total += middle_page
+        relevant_rules = [rule for rule in order_rules if rule[0] in update and rule[1] in update]
+        page_order = get_order(relevant_rules, update)
+
+        total += page_order[len(update) // 2]
 
     return total
 
@@ -74,8 +60,8 @@ def process_input(input_path: str):
 
 
 def main():
-    input = process_input("05/input_05.txt")
-    #print(part1(input[0], input[1]))
+    input = process_input("2024/05/input_05.txt")
+    print(part1(input[0], input[1]))
     print(part2(input[0], input[1]))
 
 if __name__ == "__main__":

@@ -12,6 +12,7 @@ def check_pages_are_in_order(update: list[int], order_rules: list[tuple[int]], v
 
 def get_order(order_rules: list[tuple[int]], update: list[int] = None) -> list[int]: 
     # For each number, find all the numbers that it has to go in fron of and put it in front of the first one in the update.
+    # Kind of like a bubble sort, but only bubbles up to the first one it has to go in front of.
     for page in update:
         rules_with_page_as_first = [rule for rule in order_rules if rule[0] == page]
         minimum_position = update.index(page) if len(rules_with_page_as_first) < 1 else min([update.index(rule[1]) for rule in rules_with_page_as_first])

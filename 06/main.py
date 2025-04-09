@@ -42,12 +42,17 @@ def part2(area_map: list[list[str]]) -> int:
 
     def follow_path(startingNavPoint: NavPoint, allow_branching=True):
         nonlocal number_of_obstacles_to_place
+        visited_points = []
         current_pos = startingNavPoint.position
         current_direction = startingNavPoint.direction        
 
         while True:
             if allow_branching:
-                print(current_pos, current_direction)
+                print(current_pos, current_direction, "------------------------------------")
+            # else:
+            #     print(current_pos, current_direction)
+
+            visited_points.append(NavPoint(current_pos, current_direction))
 
             current_pos = (current_pos[0] - sin(current_direction), current_pos[1] + cos(current_direction))        
 
@@ -57,6 +62,15 @@ def part2(area_map: list[list[str]]) -> int:
             if area_map[current_pos[0]][current_pos[1]] == "#":
                 current_pos = (current_pos[0] + sin(current_direction), current_pos[1] - cos(current_direction))
                 current_direction = (current_direction - (pi / 2)) % (2 * pi)
+
+            if NavPoint(current_pos, current_direction) in visited_points:
+                number_of_obstacles_to_place += 1
+                if allow_branching == False:
+                    return
+                else:
+                    continue
+
+
 
             if current_pos == startingNavPoint.position and current_direction == (startingNavPoint.direction + (pi / 2)) % (2 * pi):
                 number_of_obstacles_to_place += 1

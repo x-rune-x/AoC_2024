@@ -57,20 +57,23 @@ def part2(area_map: list[list[str]]) -> int:
         else:
             visited_points.append(NavPoint(current_pos, current_dir))
 
-    for point in visited_points:
-        print(point.position, point.direction)
+    visited_points.pop() # Remove last point because it represents hitting an obstacle outside the area.
 
-    for point in visited_points:
-        print(point.position, point.direction, "------------------------------")
-        current_pos = point.position
-        current_dir = (point.direction - (pi / 2)) % (2 * pi)
+    for divergence_point in visited_points:
+        print(divergence_point.position, divergence_point.direction)
 
-        divergent_visited_points = []
+    for divergence_point in visited_points:
+        print(divergence_point.position, divergence_point.direction, "------------------------------")
+        current_pos = divergence_point.position
+        current_dir = (divergence_point.direction - (pi / 2)) % (2 * pi)
+
+        divergent_visited_points = set()      
 
         while True:           
             current_pos = (current_pos[0] - sin(current_dir), current_pos[1] + cos(current_dir))
+            advanced_point = NavPoint(current_pos, current_dir)
 
-            if NavPoint(current_pos, current_dir) == point or NavPoint(current_pos, current_dir) in divergent_visited_points:
+            if advanced_point == divergence_point or advanced_point in divergent_visited_points:
                 number_of_obstacles_to_place += 1
                 break
             elif current_pos[0] < 0 or current_pos[0] >= len(area_map) or current_pos[1] < 0 or current_pos[1] >= len(area_map[0]):
@@ -79,7 +82,7 @@ def part2(area_map: list[list[str]]) -> int:
                 current_pos = (current_pos[0] + sin(current_dir), current_pos[1] - cos(current_dir))
                 current_dir = (current_dir - (pi / 2)) % (2 * pi)
             else:
-                divergent_visited_points.append(NavPoint(current_pos, current_dir))
+                divergent_visited_points.add(advanced_point)            
 
     return number_of_obstacles_to_place
 
